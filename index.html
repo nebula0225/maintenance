@@ -1,33 +1,316 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <title>점검 중입니다</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f6f8fa;
-      color: #333;
-      text-align: center;
-      padding: 80px;
-    }
-    .card {
-      max-width: 500px;
-      margin: auto;
-      background: white;
-      border-radius: 12px;
-      padding: 40px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    h1 { color: #e63946; }
-  </style>
-</head>
-<body>
-  <div class="card">
-    <h1>🚧 서버 점검 중입니다 🚧</h1>
-    <p>현재 서비스 안정화를 위한 점검을 진행 중입니다.<br>
-       잠시 후 다시 접속해 주세요.</p>
-    <p>뮤블라 드림</p>
-  </div>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>점검 중 | 뮤블라</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#111111" />
+    <style>
+      :root{
+        --brand:#E6C65B; /* 포인트 컬러 골드 */
+        --bg:#0b0c10;
+        --card:rgba(255,255,255,0.06);
+        --card-2:rgba(255,255,255,0.10);
+        --text:#f5f7f9;
+        --muted:#a2a9b4;
+        --ok:#47d16c;
+        --warn:#f7b84b;
+        --err:#ef6a6a;
+        --radius:20px;
+        --shadow:0 10px 40px rgba(0,0,0,0.45);
+      }
+      @media (prefers-color-scheme: light){
+        :root{
+          --bg:#f6f7fb;
+          --card:rgba(0,0,0,0.05);
+          --card-2:rgba(0,0,0,0.08);
+          --text:#0f1115;
+          --muted:#546070;
+        }
+      }
+      *{box-sizing:border-box}
+      html,body{height:100%}
+      body{
+        margin:0;
+        font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo", "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        color:var(--text);
+        background: radial-gradient(1200px 800px at 15% 10%, rgba(230,198,91,.18), transparent 40%),
+                    radial-gradient(1000px 700px at 90% 90%, rgba(87,180,255,.12), transparent 45%),
+                    linear-gradient(180deg, #0a0b0f, var(--bg));
+        min-height:100%;
+        display:grid;
+        place-items:center;
+        padding:32px;
+      }
+      /* 부드러운 빛 번짐 */
+      .glow{
+        position:absolute; inset:-20vmax;
+        background: conic-gradient(from 0deg, rgba(230,198,91,.08), rgba(87,180,255,.06), rgba(230,198,91,.08));
+        filter: blur(60px) saturate(120%);
+        z-index:0; animation:spin 30s linear infinite;
+        pointer-events:none;
+      }
+      @keyframes spin{to{transform:rotate(1turn)}}
+
+      .wrap{position:relative; z-index:1; width:100%; max-width:860px}
+      .panel{
+        position:relative;
+        background:linear-gradient(180deg, var(--card), transparent 60%), var(--card);
+        border-radius: var(--radius);
+        border:1px solid rgba(255,255,255,.12);
+        box-shadow: var(--shadow);
+        overflow:hidden;
+      }
+      .panel::before{
+        content:"";
+        position:absolute; inset:0;
+        border-radius:inherit;
+        padding:1px;
+        background: linear-gradient(135deg, rgba(230,198,91,.55), rgba(255,255,255,0), rgba(87,180,255,.45));
+        -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        -webkit-mask-composite:xor; mask-composite: exclude;
+        pointer-events:none;
+      }
+      header{
+        padding:28px 28px 0;
+        display:flex; align-items:center; gap:14px;
+      }
+      .logo {
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        width:40px; height:40px;
+        border-radius:12px;
+        background:
+          radial-gradient(60% 60% at 30% 30%, rgba(255,255,255,.65), rgba(255,255,255,0)),
+          linear-gradient(135deg, rgba(230,198,91,.95), rgba(230,198,91,.45) 60%, rgba(58,58,58,.2));
+        border:1px solid rgba(255,255,255,.25);
+        box-shadow: inset 0 0 0 1px rgba(0,0,0,.15), 0 6px 20px rgba(230,198,91,.25);
+        flex:0 0 auto;
+      }
+      .logo svg {
+        width:22px; height:22px;
+        fill:#fff;
+      }
+      .brand{font-weight:700; letter-spacing:.2px; font-size:18px}
+      .badge{
+        margin-left:auto; font-size:13px; padding:8px 12px; border-radius:999px;
+        background: rgba(230,198,91,.14); color:var(--brand); border:1px solid rgba(230,198,91,.35)
+      }
+
+      .hero{padding:16px 28px 28px}
+      h1{margin:10px 0 6px; font-size:34px; line-height:1.18; letter-spacing:-.2px}
+      p.lead{margin:0; color:var(--muted); font-size:16px}
+
+      .grid{
+        display:grid; gap:14px; margin:24px 0 6px;
+        grid-template-columns: repeat(3, minmax(0,1fr));
+      }
+      .card{
+        background:var(--card-2);
+        border:1px solid rgba(255,255,255,.12);
+        border-radius:14px; padding:14px 16px;
+      }
+      .k{font-size:12px; color:var(--muted); margin:0 0 6px}
+      .v{font-size:15px; margin:0}
+      .v.strong{font-weight:600}
+
+      .progress{
+        margin-top:18px; height:10px; background:rgba(255,255,255,.12);
+        border-radius:999px; overflow:hidden; border:1px solid rgba(255,255,255,.12)
+      }
+      .bar{
+        height:100%; width:0%;
+        background:linear-gradient(90deg, var(--brand), #b4f0ff);
+        box-shadow: 0 0 18px rgba(230,198,91,.45);
+        transition:width .6s ease;
+      }
+
+      .actions{display:flex; gap:10px; margin-top:22px}
+      .btn{
+        appearance:none; border:1px solid rgba(255,255,255,.18);
+        background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+        color:var(--text); padding:12px 14px; border-radius:12px; font-size:14px; cursor:pointer;
+        text-decoration:none; display:inline-flex; align-items:center; gap:8px
+      }
+      .btn.primary{
+        border-color: rgba(230,198,91,.55);
+        background:linear-gradient(180deg, rgba(230,198,91,.25), rgba(230,198,91,.12));
+        color:#1a1300
+      }
+      .foot{
+        display:flex; justify-content:space-between; align-items:center;
+        padding:18px 28px 24px; color:var(--muted); font-size:12px
+      }
+      code.tag{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:12px; padding:3px 8px; border-radius:8px; border:1px solid rgba(255,255,255,.18); background:rgba(0,0,0,.18); color:#d9e0ea}
+      .sr{position:absolute; clip:rect(0 0 0 0); width:1px; height:1px; margin:-1px; overflow:hidden}
+
+      @media (max-width:720px){
+        .grid{grid-template-columns:1fr; margin-top:18px}
+        h1{font-size:28px}
+        header{padding:22px 18px 0}
+        .hero{padding:14px 18px 22px}
+        .foot{padding:14px 18px 20px}
+      }
+    </style>
+  </head>
+  <body>
+    <div class="glow" aria-hidden="true"></div>
+
+    <div class="wrap">
+      <section class="panel" role="status" aria-live="polite">
+        <header>
+          <div class="logo" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+              <path d="M12 2l8 4v6c0 5.25-3.5 10-8 11-4.5-1-8-5.75-8-11V6l8-4z"/>
+              <text x="12" y="16" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">M</text>
+            </svg>
+          </div>
+          <div class="brand" id="brand">Service</div>
+          <div class="badge" id="status-badge">점검 진행</div>
+        </header>
+
+        <div class="hero">
+          <h1 id="title">서비스 점검 중</h1>
+          <p class="lead" id="desc">안정화 작업 진행 중입니다 잠시만 기다려 주세요</p>
+
+          <div class="grid" role="group" aria-label="점검 정보">
+            <div class="card">
+              <p class="k">시작</p>
+              <p class="v strong" id="start">-</p>
+            </div>
+            <div class="card">
+              <p class="k">예상 복구</p>
+              <p class="v strong" id="eta">-</p>
+            </div>
+            <div class="card">
+              <p class="k">진행률</p>
+              <p class="v strong"><span id="percent">0</span>%</p>
+            </div>
+          </div>
+
+          <div class="progress" aria-label="진행률">
+            <div class="bar" id="bar" style="width:0%"></div>
+          </div>
+
+          <div class="actions">
+            <a class="btn primary" id="refresh" href="#">새로고침</a>
+            <a class="btn" id="contact" href="mailto:support@example.com">문의 메일</a>
+          </div>
+        </div>
+
+        <div class="foot">
+          <span id="upd">업데이트: -</span>
+          <span><code class="tag" id="idtag">MAINT-000</code></span>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      // ===== 변경 포인트: 여기만 수정 =====
+      const CONFIG = {
+        serviceName: "뮤블라",
+        title: "서비스 점검 중",
+        message: "안정화 작업 진행 중 잠시 후 다시 접속해 주세요",
+        windowStart: "2025-08-21T09:00:00+09:00",
+        windowEnd:   "2025-08-22T01:00:00+09:00",
+        // percent는 백업(시작/끝 시간이 없을 때만 사용)
+        percent: 50,
+        ticketId: "MAINT-Mewbula",
+        contactEmail: "mewbula@gmail.com",
+        useBrowserLocaleTime: false
+      };
+      // ===== 여기까지 =====
+
+      const $ = id => document.getElementById(id);
+      const fmt = (d) => new Intl.DateTimeFormat("ko-KR", {
+        year:'numeric', month:'2-digit', day:'2-digit',
+        hour:'2-digit', minute:'2-digit',
+        hour12:false, timeZone:"Asia/Seoul" // KST 고정
+      }).format(d);
+      const toDate = s => s ? new Date(s) : null;
+
+      // 시간 구간 기반 퍼센트 계산 (0~100)
+      function calcPercent(now, start, end){
+        if(!start || !end) return Math.max(0, Math.min(100, Number(CONFIG.percent) || 0));
+        const total = end - start;
+        if(total <= 0) return 100;
+        if(now <= start) return 0;
+        if(now >= end) return 100;
+        return Math.round(((now - start) / total) * 100);
+      }
+
+      // 부드럽게 현재 퍼센트를 target까지 올림
+      function animateTo(target){
+        const cur = Number($("percent").textContent) || 0;
+        if(target === cur) return;
+        const step = () => {
+          const current = Number($("percent").textContent) || 0;
+          const diff = target - current;
+          if(Math.abs(diff) < 1) {
+            $("percent").textContent = target;
+            $("bar").style.width = target + "%";
+            return;
+          }
+          const next = current + Math.sign(diff) * Math.max(1, Math.floor(Math.abs(diff) * 0.2));
+          $("percent").textContent = next;
+          $("bar").style.width = next + "%";
+          requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      }
+
+      function apply(){
+        $("brand").textContent = CONFIG.serviceName || "Service";
+        $("title").textContent = CONFIG.title || "서비스 점검 중";
+        $("desc").textContent  = CONFIG.message || "잠시만 기다려 주세요";
+        $("contact").href = `mailto:${CONFIG.contactEmail || "support@example.com"}`;
+        $("idtag").textContent = CONFIG.ticketId || "MAINT-000";
+
+        const start = toDate(CONFIG.windowStart);
+        const end   = toDate(CONFIG.windowEnd);
+        if(start) $("start").textContent = fmt(start);
+        if(end)   $("eta").textContent   = fmt(end);
+
+        // 초기 퍼센트 세팅 (애니메이션)
+        animateTo(calcPercent(new Date(), start, end));
+
+        updateBadge();
+        $("refresh").addEventListener("click", e=>{ e.preventDefault(); location.reload(); });
+
+        // 1초마다 시간/퍼센트/배지 업데이트
+        setInterval(()=>{
+          const now = new Date();
+          $("upd").textContent = "업데이트: " + fmt(now);
+
+          if(end){
+            const left = end - now;
+            if(left <= 0){
+              $("eta").textContent = "곧 복구";
+              $("status-badge").textContent = "최종 마무리";
+              $("status-badge").style.background = "rgba(71,209,108,.18)";
+              $("status-badge").style.color = "var(--ok)";
+            }
+          }
+
+          // 퍼센트 타겟 재계산 → 부드럽게 이동
+          animateTo(calcPercent(now, start, end));
+          updateBadge();
+        }, 1000);
+      }
+
+      function updateBadge(){
+        const now = new Date();
+        const s = toDate(CONFIG.windowStart);
+        const e = toDate(CONFIG.windowEnd);
+        const b = $("status-badge");
+        if(s && now < s){ b.textContent = "예정"; b.style.background="rgba(247,184,75,.14)"; b.style.color="var(--warn)"; return; }
+        if(e && now > e){ b.textContent = "마무리"; b.style.background="rgba(71,209,108,.18)"; b.style.color="var(--ok)"; return; }
+        b.textContent = "점검 진행";
+      }
+
+      apply();
+    </script>
+  </body>
 </html>
