@@ -211,25 +211,30 @@
       // ===== 변경 포인트: 여기만 수정 =====
       const CONFIG = {
         serviceName: "뮤블라",
-        title: "서비스 점검 중",
-        message: "안정화 작업 진행 중 잠시 후 다시 접속해 주세요",
-        windowStart: "2025-10-03T10:30:00+09:00",
-        windowEnd:   "2025-10-03T11:30:00+09:00",
-        // percent는 백업(시작/끝 시간이 없을 때만 사용)
+        title: "서비스 업데이트 중",
+        message: "잠시 후 새로 고침 버튼을 눌러주세요",
+        windowStart: "2025-11-14 00:50",
+        windowEnd:   "2025-11-14 01:20",
         percent: 50,
         ticketId: "MAINT-Mewbula",
         contactEmail: "mewbula@gmail.com",
         useBrowserLocaleTime: false
       };
-      // ===== 여기까지 =====
 
       const $ = id => document.getElementById(id);
-      const fmt = (d) => new Intl.DateTimeFormat("ko-KR", {
-        year:'numeric', month:'2-digit', day:'2-digit',
-        hour:'2-digit', minute:'2-digit',
-        hour12:false, timeZone:"Asia/Seoul" // KST 고정
-      }).format(d);
-      const toDate = s => s ? new Date(s) : null;
+      
+      const fmt = (d) => {
+        const opts = { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', hour12:false };
+        const tz = CONFIG.useBrowserLocaleTime ? undefined : "Asia/Seoul";
+        return new Intl.DateTimeFormat("ko-KR", tz ? {...opts, timeZone:tz} : opts).format(d);
+      };
+
+      // "YYYY-MM-DD HH:mm" → Date (KST로 해석)
+      const toDate = s => {
+        if(!s) return null;
+        const d = new Date(s.replace(' ','T') + '+09:00');
+        return isNaN(d) ? new Date(s) : d;
+      };
 
       // 시간 구간 기반 퍼센트 계산 (0~100)
       function calcPercent(now, start, end){
